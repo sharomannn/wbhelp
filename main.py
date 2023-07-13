@@ -1,37 +1,54 @@
-import requests
 import sqlite3
-import json
-from json import loads
-from apikey import headers
+from api_requests import wb_prise, update_wb_prise
 
 
 def main():
-    discount(25)
+    # Установка скидки
+    discount(45)
+
+    # Перерасчёт реальных цен
     updete_realprise()
 
-    # url = 'https://suppliers-api.wildberries.ru/public/api/v1/info'
-    # # headers = {
-    # #     'Authorization': API_TOKEN,
-    # #     'Content-Type': 'application/json'
-    # # }
-    # response = requests.get(url, headers=headers).json()
-    # print(response)
-    # print(type(response))
-    # updete_price_discon(response)
+    # Выгрузка цен с ВБ
+    # updete_price_discont(wb_prise)
+
+    update_wb_prise(post_item_wb_price)
+
+
+def post_item_wb_price():
+    conn = sqlite3.connect('bd/bd.sqlite3')
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM products")
+    prods = cursor.fetchall()
+
+    items = []
+    for prod in prods:
+        items.append({
+            'nmId': int(prod[1]),
+            'price': round(prod[7])
+        })
+    items = items[0:2]
+
+    return items
+
 
 
 def updete_realprise():
-    conn = sqlite3.connect('bd.sqlite3')
+    conn = sqlite3.connect('bd/bd.sqlite3')
     cursor = conn.cursor()
-    cursor.execute("UPDATE products SET real_price = price - (price * discount / 100))")
+    # Увеличение цены
+    # cursor.execute("UPDATE products SET price = price + (price * 25 / 100)")
+    # Обновление реальной цены
+    cursor.execute("UPDATE products SET real_price = price - (price * discount / 100)")
 
     conn.commit()
     conn.close()
 
 
 # Добавляем данные по скидкам в БД
-def updete_price_discon(response):
-    conn = sqlite3.connect('bd.sqlite3')
+def updete_price_discont(response):
+    conn = sqlite3.connect('bd/bd.sqlite3')
     cursor = conn.cursor()
 
     for item in response:
@@ -46,7 +63,7 @@ def updete_price_discon(response):
 
 def discount(number):
     # Устанавливаем соединение с базой данных SQLite
-    conn = sqlite3.connect('bd.sqlite3')
+    conn = sqlite3.connect('bd/bd.sqlite3')
     cursor = conn.cursor()
 
     # Обновляем данные в столбце 'discount'
