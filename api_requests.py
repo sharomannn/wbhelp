@@ -8,10 +8,20 @@ def wb_prise():
     response_price = requests.get(url, headers=headers).json()
     return response_price
 
+
 def update_wb_prise(items):
     # Отправка запроса к API Wildberries
     url = 'https://suppliers-api.wildberries.ru/public/api/v1/prices'
-    response = requests.post(url, headers=headers, data=json.dumps(items, ensure_ascii=False).encode('utf-8'), verify=False)
+    response = requests.post(url, headers=headers, data=json.dumps(items, ensure_ascii=False))
+
+    res = response.json()
+    print(res)
+
+def update_wb_discont(items):
+    print(items)
+    # Отправка запроса к API Wildberries
+    url = 'https://suppliers-api.wildberries.ru/public/api/v1/updateDiscounts'
+    response = requests.post(url, headers=headers, data=json.dumps(items, ensure_ascii=False))
 
     res = response.json()
     print(res)
