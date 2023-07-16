@@ -7,9 +7,20 @@ conn = sqlite3.connect("bd/bd.sqlite3")
 cursor = conn.cursor()
 
 
+
 def main():
-    result = st.button('Обновить скидку')
     age = st.slider('Укажите скидку:', 0, 100, 45)
+    result = st.button('Обновить скидку')
+
+    get_price_WB = st.button('Скачать цены с ВБ')
+    if get_price_WB:
+        updete_price_discont(wb_prise())
+        st.experimental_rerun()
+
+    post_discont_WB = st.button('Загрузить скидки на вб')
+    if post_discont_WB:
+        update_wb_discont(post_item_wb_discont())
+        st.experimental_rerun()
 
     data_container = st.empty()  # Создаем пустой контейнер
     data = query_data()
@@ -29,7 +40,10 @@ def main():
                              )
     if result:
         discount(age)
+        updete_realprise()
         st.experimental_rerun()
+
+
 
     # Установка скидки
     # discount(55)
